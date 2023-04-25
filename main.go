@@ -3,11 +3,17 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 )
+
+func init() {
+	log.SetFlags(0)
+	log.SetPrefix("libreoffice-installer: ")
+}
 
 func main() {
 	app := App{"/Applications/LibreOffice.app"}
@@ -17,8 +23,7 @@ func main() {
 
 	version, err := app.version()
 	if err != nil {
-		fmt.Println("error:", err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 	fmt.Println("Installed version:", version)
 }
