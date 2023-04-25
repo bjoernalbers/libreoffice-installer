@@ -1,4 +1,4 @@
-// libreoffice-installer
+// libreoffice-installer installs LibreOffice on macOS
 package main
 
 import (
