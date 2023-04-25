@@ -26,6 +26,10 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Installed version:", version)
+
+	if app.IsFromMAS() {
+		fmt.Println("LibreOffice has been installed from Mac App Store.")
+	}
 }
 
 type App struct {
@@ -51,4 +55,14 @@ func (a *App) version() (string, error) {
 		return "", err
 	}
 	return strings.TrimSpace(string(stdout)), nil
+}
+
+// IsFromMAS returns true if App was installed from Mac App Store (MAS).
+func (a *App) IsFromMAS() bool {
+  masReceipt := filepath.Join(a.Path, "Contents", "_MASReceipt", "receipt")
+  _, err := os.Stat(masReceipt)
+  if err == nil {
+    return true
+  }
+  return false
 }
