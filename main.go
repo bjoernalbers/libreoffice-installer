@@ -23,27 +23,36 @@ func init() {
 
 func main() {
 	app := App{"/Applications/LibreOffice.app"}
+
+	// Exit if the expected LibreOffice version is already installed
+	if !needsInstallation(app, LibreOfficeVersion) {
+		return
+	}
+	fmt.Println("Installation required.")
+}
+
+// needsInstallation returns true if installation of LibreOffice is required.
+func needsInstallation(app App, version string) bool {
+	// true if LibreOffice is not installed at all
 	if app.IsMissing() {
-		fmt.Println("LibreOffice is missing. Installation required.")
+		fmt.Println("LibreOffice is missing.")
+		return true
 	}
-
-	version, err := app.version()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Installed version:", version)
-
+	// true if LibreOffice has been installed from Mac App Store since that
+	// version is currently not fit for production:
+	// https://bugs.documentfoundation.org/show_bug.cgi?id=153927
 	if app.InstalledFromMAS() {
-		fmt.Println("LibreOffice has been installed from Mac App Store. Installation required")
+		fmt.Println("LibreOffice has been installed from Mac App Store.")
+		return true
 	}
-
-	older, err := app.IsOlderThan(LibreOfficeVersion)
-	if err != nil {
-		log.Fatal(err)
+	// true if current LibreOffice version is outdated or the version could not
+	// be determined.
+	older, err := app.IsOlderThan(version)
+	if err != nil || older {
+		fmt.Println("LibreOffice is probably outdated.")
+		return true
 	}
-	if older {
-		fmt.Println("LibreOffice is outdated. Installation required")
-	}
+	return false
 }
 
 type App struct {
