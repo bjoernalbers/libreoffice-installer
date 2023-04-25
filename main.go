@@ -8,6 +8,12 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/hashicorp/go-version"
+)
+
+const (
+	LibreOfficeVersion = "7.4.6"
 )
 
 func init() {
@@ -29,6 +35,14 @@ func main() {
 
 	if app.InstalledFromMAS() {
 		fmt.Println("LibreOffice has been installed from Mac App Store. Installation required")
+	}
+
+	older, err := app.IsOlderThan(LibreOfficeVersion)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if older {
+		fmt.Println("LibreOffice is outdated. Installation required")
 	}
 }
 
@@ -71,4 +85,24 @@ func (a *App) InstalledFromMAS() bool {
 		return true
 	}
 	return false
+}
+
+// IsOlderThan returns a boolean indication wether the app is older than the
+// given version.
+// An error might be returned if any of the versions is invalid or the current
+// version could not be optained.
+func (a *App) IsOlderThan(otherVersion string) (bool, error) {
+	thisVersion, err := a.version()
+	if err != nil {
+		return false, err
+	}
+	this, err := version.NewVersion(thisVersion)
+	if err != nil {
+		return false, err
+	}
+	other, err := version.NewVersion(otherVersion)
+	if err != nil {
+		return false, err
+	}
+	return this.LessThan(other), nil
 }
