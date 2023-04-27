@@ -13,6 +13,7 @@ DISTRIBUTION_PKG := $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION).pkg
 .PHONY: clean
 
 $(DISTRIBUTION_PKG): $(COMPONENT_PKG)
+	@test -n "$(VERSION)" || (echo "No Semantic Version in git tag!"; false)
 	productbuild \
 		--package "$<" \
 		--sign "$(IDENTITY_NAME)" \
@@ -20,6 +21,7 @@ $(DISTRIBUTION_PKG): $(COMPONENT_PKG)
 		"$@"
 
 $(COMPONENT_PKG): $(EXECUTABLE)
+	@test -n "$(VERSION)" || (echo "No Semantic Version in git tag!"; false)
 	mkdir -p $(SCRIPTS_DIR)
 	cp "$<" "$(SCRIPTS_DIR)/postinstall"
 	pkgbuild \
