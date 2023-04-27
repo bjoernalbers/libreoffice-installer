@@ -2,7 +2,6 @@ PROJECT_NAME := libreoffice-installer
 BUILD_DIR := build
 SCRIPTS_DIR := $(BUILD_DIR)/scripts
 TARGET_EXEC := $(BUILD_DIR)/$(PROJECT_NAME)
-SRC := $(shell find . -name '*.go' -or -name go.mod -or -name go.sum)
 COMPONENT_PKG := $(BUILD_DIR)/$(PROJECT_NAME).pkg
 IDENTIFIER := de.bjoernalbers.$(PROJECT_NAME)
 IDENTITY_NAME := Developer ID Installer: Bjoern Albers (2M83WXV6U8)
@@ -22,7 +21,7 @@ $(COMPONENT_PKG): $(TARGET_EXEC)
 		--quiet \
 		"$@"
 
-$(TARGET_EXEC): $(SRC)
+$(TARGET_EXEC): $(shell find . -name '*.go' -or -name go.mod -or -name go.sum)
 	mkdir -p $(BUILD_DIR)
 	GOARCH=arm64 go build -o "$@-arm64"
 	GOARCH=amd64 go build -o "$@-amd64"
