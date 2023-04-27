@@ -4,10 +4,19 @@ IDENTITY_NAME := Developer ID Installer: Bjoern Albers (2M83WXV6U8)
 VERSION := 0.0.1
 BUILD_DIR := build
 SCRIPTS_DIR := $(BUILD_DIR)/scripts
+DIST_DIR := dist
 EXECUTABLE := $(BUILD_DIR)/$(PROJECT_NAME)
 COMPONENT_PKG := $(BUILD_DIR)/$(PROJECT_NAME).pkg
+DISTRIBUTION_PKG := $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION).pkg
 
 .PHONY: clean
+
+$(DISTRIBUTION_PKG): $(COMPONENT_PKG)
+	productbuild \
+		--package "$<" \
+		--sign "$(IDENTITY_NAME)" \
+		--quiet \
+		"$@"
 
 $(COMPONENT_PKG): $(EXECUTABLE)
 	mkdir -p $(SCRIPTS_DIR)
