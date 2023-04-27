@@ -1,8 +1,25 @@
 BUILD_DIR := build
+SCRIPTS_DIR := $(BUILD_DIR)/scripts
 TARGET_EXEC := libreoffice-installer
 SRC := $(shell find . -name '*.go' -or -name go.mod -or -name go.sum)
+COMPONENT_PKG := libreoffice-installer.pkg
+IDENTIFIER := de.bjoernalbers.libreoffice-installer
+IDENTITY_NAME := Developer ID Installer: Bjoern Albers (2M83WXV6U8)
+VERSION := 0.0.1
 
 .PHONY: clean
+
+$(BUILD_DIR)/$(COMPONENT_PKG): $(BUILD_DIR)/$(TARGET_EXEC)
+	mkdir -p $(SCRIPTS_DIR)
+	cp "$<" "$(SCRIPTS_DIR)/postinstall"
+	pkgbuild \
+		--nopayload \
+		--scripts "$(SCRIPTS_DIR)" \
+		--identifier "$(IDENTIFIER)" \
+		--version "$(VERSION)" \
+		--sign "$(IDENTITY_NAME)" \
+		--quiet \
+		"$@"
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(SRC)
 	mkdir -p $(BUILD_DIR)
