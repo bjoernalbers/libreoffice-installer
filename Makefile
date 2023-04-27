@@ -1,7 +1,8 @@
 PROJECT_NAME := libreoffice-installer
 IDENTIFIER := de.bjoernalbers.$(PROJECT_NAME)
 IDENTITY_NAME := Developer ID Installer: Bjoern Albers (2M83WXV6U8)
-VERSION := $(shell git describe --tags | tr -d v )
+# Regex to capture Semantic Version string taken from: https://semver.org
+VERSION := $(shell git describe --tags | grep -Eo '^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$$' | tr -d v)
 BUILD_DIR := build
 SCRIPTS_DIR := $(BUILD_DIR)/scripts
 DIST_DIR := dist
