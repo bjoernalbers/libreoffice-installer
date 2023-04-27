@@ -2,7 +2,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -28,28 +27,28 @@ func main() {
 	if !needsInstallation(app, LibreOfficeVersion) {
 		return
 	}
-	fmt.Println("Installation required.")
+	log.Println("Installation required.")
 }
 
 // needsInstallation returns true if installation of LibreOffice is required.
 func needsInstallation(app App, version string) bool {
 	// true if LibreOffice is not installed at all
 	if app.IsMissing() {
-		fmt.Println("LibreOffice is missing.")
+		log.Println("LibreOffice is missing.")
 		return true
 	}
 	// true if LibreOffice has been installed from Mac App Store since that
 	// version is currently not fit for production:
 	// https://bugs.documentfoundation.org/show_bug.cgi?id=153927
 	if app.InstalledFromMAS() {
-		fmt.Println("LibreOffice has been installed from Mac App Store.")
+		log.Println("LibreOffice has been installed from Mac App Store.")
 		return true
 	}
 	// true if current LibreOffice version is outdated or the version could not
 	// be determined.
 	older, err := app.IsOlderThan(version)
 	if err != nil || older {
-		fmt.Println("LibreOffice is probably outdated.")
+		log.Println("LibreOffice is probably outdated.")
 		return true
 	}
 	return false
