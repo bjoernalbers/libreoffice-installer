@@ -1,11 +1,11 @@
 PROJECT_NAME := libreoffice-installer
+IDENTIFIER := de.bjoernalbers.$(PROJECT_NAME)
+IDENTITY_NAME := Developer ID Installer: Bjoern Albers (2M83WXV6U8)
+VERSION := 0.0.1
 BUILD_DIR := build
 SCRIPTS_DIR := $(BUILD_DIR)/scripts
 EXECUTABLE := $(BUILD_DIR)/$(PROJECT_NAME)
 COMPONENT_PKG := $(BUILD_DIR)/$(PROJECT_NAME).pkg
-IDENTIFIER := de.bjoernalbers.$(PROJECT_NAME)
-IDENTITY_NAME := Developer ID Installer: Bjoern Albers (2M83WXV6U8)
-VERSION := 0.0.1
 
 .PHONY: clean
 
