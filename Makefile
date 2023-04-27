@@ -10,4 +10,4 @@ $(BUILD_DIR)/$(TARGET_EXEC):
 	lipo "$@_arm64" "$@_amd64" -create -output "$@"
 
 clean:
-	rm -r $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)
