@@ -2,9 +2,12 @@
 package main
 
 import (
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -52,6 +55,27 @@ func needsInstallation(app App, version string) bool {
 		return true
 	}
 	return false
+}
+
+// download downloads the given URL to the temp. directory and returns the path
+// to the downloaded file.
+func download(url string) (string, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	path := filepath.Join(os.TempDir(), path.Base(url))
+	file, err := os.Create(path)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return "", err
+	}
+	return path, nil
 }
 
 type App struct {
