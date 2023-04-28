@@ -2,6 +2,8 @@
 package main
 
 import (
+	"crypto/sha256"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -76,6 +78,20 @@ func download(url string) (string, error) {
 		return "", err
 	}
 	return path, nil
+}
+
+// checksum returns the SHA-256 checksum from input filename
+func checksum(filename string) (string, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+	content, err := io.ReadAll(file)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%x", sha256.Sum256(content)), nil
 }
 
 type App struct {
