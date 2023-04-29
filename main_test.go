@@ -54,3 +54,52 @@ func TestChecksum(t *testing.T) {
 		t.Fatalf("checksum() = %v, want: %v", got, want)
 	}
 }
+
+func TestDmgURL(t *testing.T) {
+	tests := []struct {
+		version string
+		arch    string
+		want    string
+		wantErr bool
+	}{
+		{
+			"7.4.6",
+			"x86_64",
+			"https://download.documentfoundation.org/libreoffice/stable/7.4.6/mac/x86_64/LibreOffice_7.4.6_MacOS_x86-64.dmg",
+			false,
+		},
+		{
+			"7.4.6",
+			"arm64",
+			"https://download.documentfoundation.org/libreoffice/stable/7.4.6/mac/aarch64/LibreOffice_7.4.6_MacOS_aarch64.dmg",
+			false,
+		},
+		{
+			"7.5.2",
+			"x86_64",
+			"https://download.documentfoundation.org/libreoffice/stable/7.5.2/mac/x86_64/LibreOffice_7.5.2_MacOS_x86-64.dmg",
+			false,
+		},
+		{
+			"7.5.2",
+			"arm64",
+			"https://download.documentfoundation.org/libreoffice/stable/7.5.2/mac/aarch64/LibreOffice_7.5.2_MacOS_aarch64.dmg",
+			false,
+		},
+		{
+			"7.4.6",
+			"",
+			"",
+			true,
+		},
+	}
+	for _, test := range tests {
+		got, err := dmgURL(test.version, test.arch)
+		if (err != nil) != test.wantErr {
+			t.Errorf("dmgTest(%q, %q) err = %v, wantErr: %v", test.version, test.arch, err, test.wantErr)
+		}
+		if got != test.want {
+			t.Errorf("dmgTest(%q, %q):\ngot:\t%q\nwant:\t%q", test.version, test.arch, got, test.want)
+		}
+	}
+}
