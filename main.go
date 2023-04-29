@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/hashicorp/go-version"
@@ -33,6 +34,17 @@ func main() {
 		return
 	}
 	log.Println("Installation required.")
+
+	// Download LibreOffice Disk Image
+	url, err := dmgURL(LibreOfficeVersion, runtime.GOARCH)
+	if err != nil {
+		log.Fatal(err)
+	}
+	dmgPath, err := download(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("LibreOffice %s downloaded to %q", LibreOfficeVersion, dmgPath)
 }
 
 // needsInstallation returns true if installation of LibreOffice is required.
