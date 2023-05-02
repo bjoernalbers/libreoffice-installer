@@ -42,8 +42,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Read checksum from downloaded checksumm file
-	//   Abort with explanation when read failed
+	content, err := os.ReadFile(checksumFilename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	expectedChecksum := strings.Split(string(content), " ")[0]
+	log.Println(string(content))  // debug
+	log.Println(expectedChecksum) // debug
 	// Download Disk Image of current LibreOffice version by host architecture
 	//   Abort with explanation when download failed
 	// Compare expected checksum with actual checksum of downloaded Disk Image
