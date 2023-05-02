@@ -7,7 +7,7 @@ type URL struct {
 	Arch    string
 }
 
-// DiskImage returns URL for the LibreOffice Disk Image.
+// DiskImage returns URL for the Disk Image.
 func (url URL) DiskImage() (string, error) {
 	var arch, filenameArch string
 	switch url.Arch {
@@ -22,4 +22,13 @@ func (url URL) DiskImage() (string, error) {
 	}
 	return fmt.Sprintf("https://download.documentfoundation.org/libreoffice/stable/%s/mac/%s/LibreOffice_%s_MacOS_%s.dmg",
 		url.Version, arch, url.Version, filenameArch), nil
+}
+
+// Checksum returns URL for the Disk Image's SHA-256 Checksum.
+func (url URL) Checksum() (string, error) {
+	diskImageURL, err := url.DiskImage()
+	if err != nil {
+		return "", err
+	}
+	return diskImageURL + ".sha256", nil
 }
