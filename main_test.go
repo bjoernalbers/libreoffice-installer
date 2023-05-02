@@ -54,11 +54,11 @@ func TestDownload(t *testing.T) {
 
 func TestChecksum(t *testing.T) {
 	want := "9a13c79fd185a5737cf5a28741143fa67d2b9980ed33a2ce61a24c67fe03dae8"
-	got, err := checksum("LICENSE")
+	got, err := Checksum("LICENSE")
 	if err != nil {
-		t.Fatalf("checksum() return an error: %v", err)
+		t.Fatalf("Checksum() return an error: %v", err)
 	}
 	if got != want {
-		t.Fatalf("checksum() = %v, want: %v", got, want)
+		t.Fatalf("Checksum() = %v, want: %v", got, want)
 	}
 }

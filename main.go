@@ -120,9 +120,9 @@ func Download(name, url string) error {
 	return nil
 }
 
-// checksum returns the SHA-256 checksum from input filename
-func checksum(filename string) (string, error) {
-	file, err := os.Open(filename)
+// Checksum returns the SHA-256 checksum from named file
+func Checksum(name string) (string, error) {
+	file, err := os.Open(name)
 	if err != nil {
 		return "", err
 	}
