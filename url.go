@@ -7,7 +7,7 @@ type URL struct {
 	Arch    string
 }
 
-// DiskImage returns URL for the Disk Image.
+// DiskImage returns the Disk Image URL.
 func (url URL) DiskImage() (string, error) {
 	var arch, filenameArch string
 	switch url.Arch {
@@ -24,7 +24,7 @@ func (url URL) DiskImage() (string, error) {
 		url.Version, arch, url.Version, filenameArch), nil
 }
 
-// Checksum returns URL for the Disk Image's SHA-256 Checksum.
+// Checksum returns the Disk Image's Checksum URL.
 func (url URL) Checksum() (string, error) {
 	diskImageURL, err := url.DiskImage()
 	if err != nil {
