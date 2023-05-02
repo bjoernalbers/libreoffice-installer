@@ -61,11 +61,12 @@ func main() {
 	log.Println("Installation required.")
 
 	// Download LibreOffice Disk Image
-	url, err := dmgURL(LibreOfficeVersion, runtime.GOARCH)
+	url := URL{LibreOfficeVersion, runtime.GOARCH}
+	diskImageURL, err := url.DiskImage()
 	if err != nil {
 		log.Fatal(err)
 	}
-	dmgPath, err := download(url)
+	dmgPath, err := download(diskImageURL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -190,21 +191,4 @@ func (a *App) IsOlderThan(otherVersion string) (bool, error) {
 		return false, err
 	}
 	return this.LessThan(other), nil
-}
-
-// dmgURL returns a download URL for a LibreOffice Disk Image (DMG) by version
-// and architecture as reported by runtime.GOARCH.
-func dmgURL(version, arch string) (string, error) {
-	var filenameArch string
-	switch arch {
-	case "arm64":
-		arch = "aarch64"
-		filenameArch = arch
-	case "x86_64":
-		filenameArch = "x86-64"
-	default:
-		return "", fmt.Errorf("Invalid architekture: %q", arch)
-	}
-	return fmt.Sprintf("https://download.documentfoundation.org/libreoffice/stable/%s/mac/%s/LibreOffice_%s_MacOS_%s.dmg",
-		version, arch, version, filenameArch), nil
 }
