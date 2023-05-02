@@ -18,7 +18,7 @@ func (url URL) DiskImage() (string, error) {
 		arch = url.Arch
 		filenameArch = "x86-64"
 	default:
-		return "", fmt.Errorf("Unknown architekture: %q", url.Arch)
+		return "", fmt.Errorf("unsupported architecture: %q", url.Arch)
 	}
 	return fmt.Sprintf("https://download.documentfoundation.org/libreoffice/stable/%s/mac/%s/LibreOffice_%s_MacOS_%s.dmg",
 		url.Version, arch, url.Version, filenameArch), nil
