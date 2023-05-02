@@ -37,8 +37,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	diskImageURL, err := url.DiskImage()
+	if err != nil {
+		log.Fatal(err)
+	}
 	checksumFilename := filepath.Join(os.TempDir(), path.Base(checksumURL))
+	diskImageFilename := filepath.Join(os.TempDir(), path.Base(diskImageURL))
 	err = Download(checksumFilename, checksumURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = Download(diskImageFilename, diskImageURL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,10 +56,8 @@ func main() {
 		log.Fatal(err)
 	}
 	expectedChecksum := strings.Split(string(content), " ")[0]
-	log.Println(string(content))  // debug
 	log.Println(expectedChecksum) // debug
-	// Download Disk Image of current LibreOffice version by host architecture
-	//   Abort with explanation when download failed
+
 	// Compare expected checksum with actual checksum of downloaded Disk Image
 	//   Abort with explanation when verification failed
 	// Quit LibreOffice when running
@@ -63,20 +70,6 @@ func main() {
 	// Copy LibreOffice.app from mounted Disk Image to /Applications
 	//   Abort with explanation when copy failed
 	// Exit successfully with status message
-
-	/*
-		// Download LibreOffice Disk Image
-		url := URL{LibreOfficeVersion, runtime.GOARCH}
-		diskImageURL, err := url.DiskImage()
-		if err != nil {
-			log.Fatal(err)
-		}
-		dmgPath, err := download(diskImageURL)
-		if err != nil {
-			log.Fatal(err)
-		}
-		log.Printf("LibreOffice %s downloaded to %q", LibreOfficeVersion, dmgPath)
-	*/
 }
 
 // needsInstallation returns true if installation of LibreOffice is required.
