@@ -30,6 +30,11 @@ func main() {
 	// Set current LibreOffice version
 	// Read installed LibreOffice version and installation method (Mac App Store vs. download)
 	//   Exit successfully if expected LibreOffice version (or newer) is already installed
+	app := App{"/Applications/LibreOffice.app"}
+	if !needsInstallation(app, LibreOfficeVersion) {
+		log.Println("LibreOffice", LibreOfficeVersion, "or newer is already installed.")
+		return
+	}
 
 	// Download SHA-256 checksum file for current LibreOffice Disk Image
 	url := URL{LibreOfficeVersion, runtime.GOARCH}
@@ -61,13 +66,6 @@ func main() {
 	//   Abort with explanation when copy failed
 	// Exit successfully with status message
 
-	app := App{"/Applications/LibreOffice.app"}
-
-	// Exit if the expected LibreOffice version is already installed
-	if !needsInstallation(app, LibreOfficeVersion) {
-		log.Println("LibreOffice", LibreOfficeVersion, "or newer is already installed.")
-		return
-	}
 
 	/*
 		// Download LibreOffice Disk Image
