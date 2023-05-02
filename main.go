@@ -56,10 +56,14 @@ func main() {
 		log.Fatal(err)
 	}
 	expectedChecksum := strings.Split(string(content), " ")[0]
-	log.Println(expectedChecksum) // debug
+	actualChecksum, err := Checksum(diskImageFilename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if actualChecksum != expectedChecksum {
+		log.Fatal("Checksum validation failed: ", diskImageFilename)
+	}
 
-	// Compare expected checksum with actual checksum of downloaded Disk Image
-	//   Abort with explanation when verification failed
 	// Quit LibreOffice when running
 	//   Abort when quit failed
 	// Remove directory /Applications/LibreOffice.app
