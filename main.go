@@ -122,14 +122,9 @@ func Download(name, url string) error {
 
 // Checksum returns the SHA-256 checksum from named file
 func Checksum(name string) (string, error) {
-	file, err := os.Open(name)
+	content, err := os.ReadFile(name)
 	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-	content, err := io.ReadAll(file)
-	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to calculate checksum: %v", err)
 	}
 	return fmt.Sprintf("%x", sha256.Sum256(content)), nil
 }
