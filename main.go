@@ -9,7 +9,9 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/hashicorp/go-version"
@@ -25,13 +27,22 @@ func init() {
 }
 
 func main() {
-	// Algorithm:
-	//
-	// Get architecture of host (Intel vs. Apple Silicon)
 	// Set current LibreOffice version
 	// Read installed LibreOffice version and installation method (Mac App Store vs. download)
 	//   Exit successfully if expected LibreOffice version (or newer) is already installed
+
 	// Download SHA-256 checksum file for current LibreOffice Disk Image
+	url := URL{LibreOfficeVersion, runtime.GOARCH}
+	checksumURL, err := url.Checksum()
+	if err != nil {
+		log.Fatal(err)
+	}
+	checksumFilename := filepath.Join(os.TempDir(), path.Base(checksumURL))
+	err = Download(checksumFilename, checksumURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	//   Abort with explanation when download failed
 	// Read checksum from downloaded checksumm file
 	//   Abort with explanation when read failed
