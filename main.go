@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -98,25 +97,26 @@ func needsInstallation(app App, version string) bool {
 	return false
 }
 
-// download downloads the given URL to the temp. directory and returns the path
-// to the downloaded file.
-func download(url string) (string, error) {
+// Download downloads the given URL to the named file.
+func Download(name, url string) error {
 	resp, err := http.Get(url)
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer resp.Body.Close()
-	path := filepath.Join(os.TempDir(), path.Base(url))
-	file, err := os.Create(path)
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed to download %q: %s", url, resp.Status)
+	}
+	file, err := os.Create(name)
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer file.Close()
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
-		return "", err
+		return err
 	}
-	return path, nil
+	return nil
 }
 
 // checksum returns the SHA-256 checksum from input filename

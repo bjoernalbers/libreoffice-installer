@@ -30,17 +30,25 @@ func TestIsMissing(t *testing.T) {
 
 func TestDownload(t *testing.T) {
 	return // Disabled test because it queries external resources
+	name := filepath.Join(os.TempDir(), "LibreOffice_7.4.6_MacOS_x86-64.dmg.md5")
 	url := "https://download.documentfoundation.org/libreoffice/stable/7.4.6/mac/x86_64/LibreOffice_7.4.6_MacOS_x86-64.dmg.md5"
-	want := filepath.Join(os.TempDir(), "LibreOffice_7.4.6_MacOS_x86-64.dmg.md5")
-	got, err := download(url)
+	err := Download(name, url)
 	if err != nil {
-		t.Fatalf("download() return an error: %v", err)
+		t.Fatalf("Download() return an error: %v", err)
 	}
+	content, err := os.ReadFile(name)
+	if err != nil {
+		t.Fatalf("Download(): failed to read downloaded file: %v", err)
+	}
+	got := string(content)
+	want := "e5df6adeac2b87298df1b3fe691b486d  LibreOffice_7.4.6_MacOS_x86-64.dmg\n"
 	if got != want {
-		t.Fatalf("download() = %v, want: %v", got, want)
+		t.Fatalf("Download(): expected download differs:\ngot:\t%q\nwant:\t%q", got, want)
 	}
-	if _, err = os.Stat(want); err != nil {
-		t.Fatalf("download(): Problem with downloaded file: %v", err)
+	url = "https://download.documentfoundation.org/missing"
+	err = Download(name, url)
+	if err == nil {
+		t.Fatal("Download(): got no error on missing file")
 	}
 }
 
