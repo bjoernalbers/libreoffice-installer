@@ -65,9 +65,9 @@ func main() {
 
 	// Exit if the expected LibreOffice version is already installed
 	if !needsInstallation(app, LibreOfficeVersion) {
+		log.Println("LibreOffice", LibreOfficeVersion, "or newer is already installed.")
 		return
 	}
-	log.Println("Installation required.")
 
 	/*
 		// Download LibreOffice Disk Image
