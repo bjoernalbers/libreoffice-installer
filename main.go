@@ -27,6 +27,31 @@ func init() {
 }
 
 func main() {
+	// Algorithm:
+	//
+	// Get architecture of host (Intel vs. Apple Silicon)
+	// Set current LibreOffice version
+	// Read installed LibreOffice version and installation method (Mac App Store vs. download)
+	//   Exit successfully if expected LibreOffice version (or newer) is already installed
+	// Download SHA-256 checksum file for current LibreOffice Disk Image
+	//   Abort with explanation when download failed
+	// Read checksum from downloaded checksumm file
+	//   Abort with explanation when read failed
+	// Download Disk Image of current LibreOffice version by host architecture
+	//   Abort with explanation when download failed
+	// Compare expected checksum with actual checksum of downloaded Disk Image
+	//   Abort with explanation when verification failed
+	// Quit LibreOffice when running
+	//   Abort when quit failed
+	// Remove directory /Applications/LibreOffice.app
+	//   Abort when quit failed
+	// Mount Disk Image to temp. folder
+	//   Abort with explanation when mount failed
+	// Defer unmount of Disk Image
+	// Copy LibreOffice.app from mounted Disk Image to /Applications
+	//   Abort with explanation when copy failed
+	// Exit successfully with status message
+
 	app := App{"/Applications/LibreOffice.app"}
 
 	// Exit if the expected LibreOffice version is already installed
