@@ -75,10 +75,12 @@ func main() {
 		log.Fatal(err)
 	}
 	defer detachDiskImage(mountpoint)
-
-	// Copy LibreOffice.app from mounted Disk Image to /Applications
-	//   Abort with explanation when copy failed
-	// Exit successfully with status message
+	cmd := exec.Command("cp", "-R", filepath.Join(mountpoint, "LibreOffice.app"), "/Applications")
+	err = cmd.Run()
+	if err != nil {
+		log.Fatal("Copy of LibreOffice failed: ", err)
+	}
+	log.Print("Installation completed successfully")
 }
 
 // needsInstallation returns true if installation of LibreOffice is required.
