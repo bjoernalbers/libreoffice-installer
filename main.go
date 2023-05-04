@@ -2,6 +2,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"fmt"
 	"io"
@@ -68,6 +69,7 @@ func main() {
 	//   Abort when quit failed
 	// Remove directory /Applications/LibreOffice.app
 	//   Abort when quit failed
+
 	// Mount Disk Image to temp. folder
 	//   Abort with explanation when mount failed
 	// Defer unmount of Disk Image
@@ -190,4 +192,22 @@ func (a *App) IsOlderThan(otherVersion string) (bool, error) {
 		return false, err
 	}
 	return this.LessThan(other), nil
+}
+
+// attachDiskImage attaches the named disk image and returns its temporary
+// mount point.
+func attachDiskImage(name string) (string, error) {
+	dir, err := os.MkdirTemp("", "")
+	if err != nil {
+		return "", fmt.Errorf("attach disk image: %v", err)
+	}
+	cmd := exec.Command("hdiutil", "attach", name, "-mountpoint", dir, "-nobrowse")
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	err = cmd.Run()
+	if err != nil {
+		firstLine, _, _ := strings.Cut(stderr.String(), "\n")
+		return "", fmt.Errorf("%s: %s", firstLine, name)
+	}
+	return dir, nil
 }
