@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	//"path"
+	"path"
 	"path/filepath"
-	//"runtime"
+	"runtime"
 	"strings"
 
 	"github.com/hashicorp/go-version"
@@ -27,7 +27,6 @@ func init() {
 }
 
 func main() {
-  /*
 	app := App{"/Applications/LibreOffice.app"}
 	if !needsInstallation(app, LibreOfficeVersion) {
 		log.Println("LibreOffice", LibreOfficeVersion, "or newer is already installed.")
@@ -64,25 +63,6 @@ func main() {
 	if actualChecksum != expectedChecksum {
 		log.Fatal("Checksum validation failed: ", diskImageFilename)
 	}
-  */
-
-  // Debug
-  log.Println("TMPDIR:", os.TempDir())
-	stdout, err := exec.Command("ls", "-lah", os.TempDir()).Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-  log.Printf("TMPDIR:\n%s", stdout)
-	stdout, err = exec.Command("ls", "-lah", "/").Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-  log.Printf("/:\n%s", stdout)
-	stdout, err = exec.Command("ls", "-lah", "/Applications").Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-  log.Printf("/Applications:\n%s", stdout)
 
 	// Quit LibreOffice when running
 	//   Abort when quit failed
