@@ -65,6 +65,9 @@ func main() {
 		log.Fatal("Checksum validation failed: ", diskImageFilename)
 	}
 
+	// debug: Copy disk image for analyse.
+	exec.Command("cp", diskImageFilename, "/tmp").Run()
+
 	// Quit LibreOffice when running
 	//   Abort when quit failed
 	// Remove directory /Applications/LibreOffice.app
