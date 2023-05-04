@@ -70,9 +70,12 @@ func main() {
 	// Remove directory /Applications/LibreOffice.app
 	//   Abort when quit failed
 
-	// Mount Disk Image to temp. folder
-	//   Abort with explanation when mount failed
-	// Defer unmount of Disk Image
+	mountpoint, err := attachDiskImage(diskImageFilename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer detachDiskImage(mountpoint)
+
 	// Copy LibreOffice.app from mounted Disk Image to /Applications
 	//   Abort with explanation when copy failed
 	// Exit successfully with status message
