@@ -211,3 +211,16 @@ func attachDiskImage(name string) (string, error) {
 	}
 	return dir, nil
 }
+
+// detachDiskImage detaches a disk image by the named device or mountpoint.
+func detachDiskImage(name string) error {
+	cmd := exec.Command("hdiutil", "detach", name)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	if err != nil {
+		firstLine, _, _ := strings.Cut(stderr.String(), "\n")
+		return fmt.Errorf("%s: %s", firstLine, name)
+	}
+	return nil
+}
