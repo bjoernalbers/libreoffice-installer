@@ -39,9 +39,7 @@ endif
 
 $(EXECUTABLE): $(shell find . -name '*.go' -or -name go.mod -or -name go.sum)
 	mkdir -p $(BUILD_DIR)
-	GOARCH=arm64 go build -o "$@-arm64"
-	GOARCH=amd64 go build -o "$@-amd64"
-	lipo "$@"-* -create -output "$@"
+	GOARCH=amd64 go build -o "$@"
 
 clean:
 	rm -rf $(BUILD_DIR)
