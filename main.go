@@ -202,7 +202,7 @@ func (a *App) IsOlderThan(otherVersion string) (bool, error) {
 // attachDiskImage attaches the named disk image and returns its temporary
 // mount point.
 func attachDiskImage(name string) (string, error) {
-	dir, err := os.MkdirTemp("", "")
+	dir, err := os.MkdirTemp("/tmp", "")
 	if err != nil {
 		return "", fmt.Errorf("attach disk image: %v", err)
 	}
