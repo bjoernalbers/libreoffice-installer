@@ -14,8 +14,8 @@ func (url URL) DiskImage() (string, error) {
 	case "arm64":
 		arch = "aarch64"
 		filenameArch = arch
-	case "x86_64":
-		arch = url.Arch
+	case "amd64":
+		arch = "x86_64"
 		filenameArch = "x86-64"
 	default:
 		return "", fmt.Errorf("unsupported architecture: %q", url.Arch)

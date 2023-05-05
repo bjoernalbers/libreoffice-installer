@@ -11,7 +11,7 @@ func TestDiskImageURL(t *testing.T) {
 	}{
 		{
 			"7.4.6",
-			"x86_64",
+			"amd64",
 			"https://download.documentfoundation.org/libreoffice/stable/7.4.6/mac/x86_64/LibreOffice_7.4.6_MacOS_x86-64.dmg",
 			false,
 		},
@@ -23,7 +23,7 @@ func TestDiskImageURL(t *testing.T) {
 		},
 		{
 			"7.5.2",
-			"x86_64",
+			"amd64",
 			"https://download.documentfoundation.org/libreoffice/stable/7.5.2/mac/x86_64/LibreOffice_7.5.2_MacOS_x86-64.dmg",
 			false,
 		},
@@ -61,7 +61,7 @@ func TestChecksumURL(t *testing.T) {
 	}{
 		{
 			"7.4.6",
-			"x86_64",
+			"amd64",
 			"https://download.documentfoundation.org/libreoffice/stable/7.4.6/mac/x86_64/LibreOffice_7.4.6_MacOS_x86-64.dmg.sha256",
 			false,
 		},
@@ -73,7 +73,7 @@ func TestChecksumURL(t *testing.T) {
 		},
 		{
 			"7.5.2",
-			"x86_64",
+			"amd64",
 			"https://download.documentfoundation.org/libreoffice/stable/7.5.2/mac/x86_64/LibreOffice_7.5.2_MacOS_x86-64.dmg.sha256",
 			false,
 		},
