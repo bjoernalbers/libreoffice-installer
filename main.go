@@ -42,8 +42,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	checksumFilename := filepath.Join("/tmp", path.Base(checksumURL))
-	diskImageFilename := filepath.Join("/tmp", path.Base(diskImageURL))
+	checksumFilename := filepath.Join(os.TempDir(), path.Base(checksumURL))
+	diskImageFilename := filepath.Join(os.TempDir(), path.Base(diskImageURL))
 	err = Download(checksumFilename, checksumURL)
 	if err != nil {
 		log.Fatal(err)
