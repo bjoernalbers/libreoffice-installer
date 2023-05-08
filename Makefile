@@ -9,7 +9,7 @@ DIST_DIR := dist
 EXECUTABLE := $(BUILD_DIR)/$(PROJECT_NAME)
 COMPONENT_PKG := $(BUILD_DIR)/$(PROJECT_NAME).pkg
 DISTRIBUTION_PKG := $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION).pkg
-TEST_VOLUME := $(shell mktemp -d)
+TEST_VOLUME := testvolume
 
 .PHONY: check clean
 
@@ -45,11 +45,13 @@ $(EXECUTABLE): $(shell find . -name '*.go' -or -name go.mod -or -name go.sum)
 	lipo "$@"-* -create -output "$@"
 
 check: $(DISTRIBUTION_PKG)
-	test -d "$(TEST_VOLUME)"
+	hdiutil create -size 1g testvolume.dmg
+	hdiutil attach testvolume.dmg -nobrowse -mountpoint "$(TEST_VOLUME)"
 	mkdir -p "$(TEST_VOLUME)/Applications"
 	sudo installer -pkg "$(DISTRIBUTION_PKG)" -target "$(TEST_VOLUME)"
 	"$(TEST_VOLUME)/Applications/LibreOffice.app/Contents/MacOS/soffice" --version
-	rm -rf "$(TEST_VOLUME)"
+	hdiutil detach "$(TEST_VOLUME)"
+	rm testvolume.dmg
 
 clean:
 	rm -rf $(BUILD_DIR)
