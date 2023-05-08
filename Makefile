@@ -44,7 +44,7 @@ $(EXECUTABLE): $(shell find . -name '*.go' -or -name go.mod -or -name go.sum)
 	GOARCH=amd64 go build -o "$@-amd64"
 	lipo "$@"-* -create -output "$@"
 
-check:
+check: $(DISTRIBUTION_PKG)
 	test -d "$(TEST_VOLUME)"
 	mkdir -p "$(TEST_VOLUME)/Applications"
 	sudo installer -pkg "$(DISTRIBUTION_PKG)" -target "$(TEST_VOLUME)"
