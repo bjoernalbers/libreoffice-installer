@@ -28,7 +28,8 @@ func init() {
 }
 
 func main() {
-	app := App{"/Applications/LibreOffice.app"}
+	volume := os.Args[3]
+	app := App{filepath.Join(volume, "/Applications/LibreOffice.app")}
 	if !needsInstallation(app, LibreOfficeVersion) {
 		log.Println("LibreOffice", LibreOfficeVersion, "or newer is already installed.")
 		return
@@ -75,7 +76,8 @@ func main() {
 		log.Fatal(err)
 	}
 	defer detachDiskImage(mountpoint)
-	cmd := exec.Command("cp", "-R", filepath.Join(mountpoint, "LibreOffice.app"), "/Applications")
+	cmd := exec.Command("cp", "-R", filepath.Join(mountpoint, "LibreOffice.app"), filepath.Join(volume, "Applications"))
+	log.Print(cmd) // debug
 	err = cmd.Run()
 	if err != nil {
 		log.Fatal("Copy of LibreOffice failed: ", err)
