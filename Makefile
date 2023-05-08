@@ -9,8 +9,9 @@ DIST_DIR := dist
 EXECUTABLE := $(BUILD_DIR)/$(PROJECT_NAME)
 COMPONENT_PKG := $(BUILD_DIR)/$(PROJECT_NAME).pkg
 DISTRIBUTION_PKG := $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION).pkg
+TEST_VOLUME := $(shell mktemp -d)
 
-.PHONY: clean
+.PHONY: check clean
 
 $(DISTRIBUTION_PKG): $(COMPONENT_PKG)
 ifndef VERSION
@@ -42,6 +43,13 @@ $(EXECUTABLE): $(shell find . -name '*.go' -or -name go.mod -or -name go.sum)
 	GOARCH=arm64 go build -o "$@-arm64"
 	GOARCH=amd64 go build -o "$@-amd64"
 	lipo "$@"-* -create -output "$@"
+
+check:
+	test -d "$(TEST_VOLUME)"
+	mkdir -p "$(TEST_VOLUME)/Applications"
+	sudo installer -pkg "$(DISTRIBUTION_PKG)" -target "$(TEST_VOLUME)"
+	"$(TEST_VOLUME)/Applications/LibreOffice.app/Contents/MacOS/soffice" --version
+	rm -rf "$(TEST_VOLUME)"
 
 clean:
 	rm -rf $(BUILD_DIR)
