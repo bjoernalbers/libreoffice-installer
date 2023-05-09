@@ -2,7 +2,6 @@
 package main
 
 import (
-	"bytes"
 	"crypto/sha256"
 	"fmt"
 	"io"
@@ -15,6 +14,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/bjoernalbers/libreoffice-installer/dmg"
 	"github.com/hashicorp/go-version"
 )
 
@@ -71,11 +71,11 @@ func main() {
 	// Remove directory /Applications/LibreOffice.app
 	//   Abort when quit failed
 
-	mountpoint, err := attachDiskImage(diskImageFilename)
+	mountpoint, err := dmg.Attach(diskImageFilename)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer detachDiskImage(mountpoint)
+	defer dmg.Detach(mountpoint)
 	cmd := exec.Command("cp", "-R", filepath.Join(mountpoint, "LibreOffice.app"), filepath.Join(volume, "Applications"))
 	log.Print(cmd) // debug
 	err = cmd.Run()
@@ -199,35 +199,4 @@ func (a *App) IsOlderThan(otherVersion string) (bool, error) {
 		return false, err
 	}
 	return this.LessThan(other), nil
-}
-
-// attachDiskImage attaches the named disk image and returns its temporary
-// mount point.
-func attachDiskImage(name string) (string, error) {
-	dir, err := os.MkdirTemp("/tmp", "")
-	if err != nil {
-		return "", fmt.Errorf("attach disk image: %v", err)
-	}
-	cmd := exec.Command("hdiutil", "attach", name, "-mountpoint", dir, "-nobrowse")
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	if err != nil {
-		firstLine, _, _ := strings.Cut(stderr.String(), "\n")
-		return "", fmt.Errorf("%s: %s", firstLine, name)
-	}
-	return dir, nil
-}
-
-// detachDiskImage detaches a disk image by the named device or mountpoint.
-func detachDiskImage(name string) error {
-	cmd := exec.Command("hdiutil", "detach", name)
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	if err != nil {
-		firstLine, _, _ := strings.Cut(stderr.String(), "\n")
-		return fmt.Errorf("%s: %s", firstLine, name)
-	}
-	return nil
 }
