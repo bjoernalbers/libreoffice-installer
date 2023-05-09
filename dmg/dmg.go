@@ -3,6 +3,7 @@ package dmg
 
 import (
 	"bytes"
+	"encoding/xml"
 	"fmt"
 	"os"
 	"os/exec"
@@ -37,4 +38,29 @@ func Detach(name string) error {
 		return fmt.Errorf("%s: %s", firstLine, name)
 	}
 	return nil
+}
+
+// mountpointFromPlist returns first mountpoint from plist.
+func mountpointFromPlist(plist []byte) (string, error) {
+	dec := xml.NewDecoder(bytes.NewReader(plist))
+	var tag string
+	var isMountpointKey bool
+	for {
+		token, err := dec.Token()
+		if err != nil {
+			break
+		}
+		switch token := token.(type) {
+		case xml.StartElement:
+			tag = token.Name.Local
+		case xml.CharData:
+			value := string(token)
+			if tag == "key" && value == "mount-point" {
+				isMountpointKey = true
+			} else if isMountpointKey && tag == "string" {
+				return value, nil
+			}
+		}
+	}
+	return "", fmt.Errorf("dmg: no mountpoint found")
 }
