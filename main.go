@@ -200,3 +200,29 @@ func (a *App) IsOlderThan(otherVersion string) (bool, error) {
 	}
 	return this.LessThan(other), nil
 }
+
+// pgrep returns list of process IDs (PIDs) found by process name.
+func pgrep(name string) ([]int, error) {
+	var pids []int
+	cmd := exec.Command("pgrep", "-x", name)
+	output, err := cmd.Output()
+	if err != nil {
+		exiterr, ok := err.(*exec.ExitError)
+		if !ok {
+			return nil, err
+		}
+		if exiterr.ProcessState.ExitCode() != 1 {
+			return nil, exiterr
+		}
+		return nil, nil
+	}
+	scanner := bufio.NewScanner(bytes.NewReader(output))
+	for scanner.Scan() {
+		pid, err := strconv.Atoi(scanner.Text())
+		if err != nil {
+			return nil, err
+		}
+		pids = append(pids, pid)
+	}
+	return pids, nil
+}
