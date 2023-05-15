@@ -2,6 +2,8 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"crypto/sha256"
 	"fmt"
 	"io"
@@ -9,9 +11,11 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
 	"path"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/bjoernalbers/libreoffice-installer/dmg"
@@ -66,10 +70,12 @@ func main() {
 		log.Fatal("Checksum validation failed: ", diskImageFilename)
 	}
 
-	// Quit LibreOffice when running
-	//   Abort when quit failed
+	err = quitLibreOffice()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Remove directory /Applications/LibreOffice.app
-	//   Abort when quit failed
 
 	mountpoint, err := dmg.Attach(diskImageFilename)
 	if err != nil {
@@ -201,6 +207,32 @@ func (a *App) IsOlderThan(otherVersion string) (bool, error) {
 	return this.LessThan(other), nil
 }
 
+func quitLibreOffice() error {
+	procname := "soffice"
+	pids, err := pgrep(procname)
+	if err != nil {
+		return err
+	}
+	if len(pids) == 0 {
+		return nil
+	}
+	users, err := processUsers(pids)
+	if err != nil {
+		return err
+	}
+	for _, user := range users {
+		err := quitApp("LibreOffice", user)
+		if err != nil {
+			return err
+		}
+	}
+	pids, err = pgrep(procname)
+	if len(pids) != 0 {
+		return fmt.Errorf("unable to quit LibreOffice")
+	}
+	return nil
+}
+
 // pgrep returns list of process IDs (PIDs) found by process name.
 func pgrep(name string) ([]int, error) {
 	var pids []int
@@ -225,4 +257,53 @@ func pgrep(name string) ([]int, error) {
 		pids = append(pids, pid)
 	}
 	return pids, nil
+}
+
+// processUsers returns list of user names by corresponding PIDs
+func processUsers(pids []int) ([]string, error) {
+	cmd := exec.Command("ps", "-p", pidsToOpt(pids), "-o", "user=")
+	output, err := cmd.Output()
+	if err != nil {
+		return nil, err
+	}
+	users := make(map[string]int)
+	scanner := bufio.NewScanner(bytes.NewReader(output))
+	for scanner.Scan() {
+		users[scanner.Text()]++
+	}
+	var uniqueUsers []string
+	for u := range users {
+		uniqueUsers = append(uniqueUsers, u)
+	}
+	return uniqueUsers, nil
+}
+
+// pidsToOpt returns PIDs as string joined by commas.
+func pidsToOpt(pids []int) string {
+	var s []string
+	for _, pid := range pids {
+		s = append(s, strconv.Itoa(pid))
+	}
+	return strings.Join(s, ",")
+}
+
+// quitApp quits macOS applicattion by username.
+func quitApp(app, username string) error {
+	appleScript := fmt.Sprintf("quit app %q", app)
+	var cmd *exec.Cmd
+	currentUser, err := user.Current()
+	if err != nil {
+		return err
+	}
+	if currentUser.Username != username {
+		cmd = exec.Command("sudo", "--non-interactive", "--user", username, "osascript", "-e", appleScript)
+	} else {
+		cmd = exec.Command("osascript", "-e", appleScript)
+	}
+	log.Print(cmd)
+	err = cmd.Run()
+	if err != nil {
+		return err
+	}
+	return nil
 }
