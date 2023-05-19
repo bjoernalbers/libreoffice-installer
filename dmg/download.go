@@ -41,7 +41,8 @@ func Download(version, arch string) (string, error) {
 		return "", err
 	}
 	if actualChecksum != expectedChecksum {
-		return "", fmt.Errorf("Checksum validation failed: %s", diskImageFilename)
+		return "", fmt.Errorf("downloaded disk image has wrong checkum: %s",
+			actualChecksum)
 	}
 	return diskImageFilename, nil
 }
