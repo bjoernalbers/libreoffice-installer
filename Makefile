@@ -55,3 +55,5 @@ check: $(DISTRIBUTION_PKG)
 
 clean:
 	rm -rf $(BUILD_DIR)
+	-hdiutil detach "$(TEST_VOLUME)" 2>/dev/null
+	rm -f testvolume.dmg
