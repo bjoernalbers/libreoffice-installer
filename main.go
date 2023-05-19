@@ -4,14 +4,12 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"crypto/sha256"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -40,37 +38,6 @@ func main() {
 		log.Println("LibreOffice", LibreOfficeVersion, "or newer is already installed.")
 		return
 	}
-	url := URL{LibreOfficeVersion, runtime.GOARCH}
-	checksumURL, err := url.Checksum()
-	if err != nil {
-		log.Fatal(err)
-	}
-	diskImageURL, err := url.DiskImage()
-	if err != nil {
-		log.Fatal(err)
-	}
-	checksumFilename := filepath.Join(os.TempDir(), path.Base(checksumURL))
-	diskImageFilename := filepath.Join(os.TempDir(), path.Base(diskImageURL))
-	err = Download(checksumFilename, checksumURL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = Download(diskImageFilename, diskImageURL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	content, err := os.ReadFile(checksumFilename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	expectedChecksum := strings.Split(string(content), " ")[0]
-	actualChecksum, err := Checksum(diskImageFilename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if actualChecksum != expectedChecksum {
-		log.Fatal("Checksum validation failed: ", diskImageFilename)
-	}
 
 	err = quitLibreOffice()
 	if err != nil {
@@ -78,6 +45,11 @@ func main() {
 	}
 
 	// Remove directory /Applications/LibreOffice.app
+
+	diskImageFilename, err := dmg.Download(LibreOfficeVersion, runtime.GOARCH)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	mountpoint, err := dmg.Attach(diskImageFilename)
 	if err != nil {
@@ -170,37 +142,6 @@ func needsInstallation(app App, version string) bool {
 		return true
 	}
 	return false
-}
-
-// Download downloads the given URL to the named file.
-func Download(name, url string) error {
-	resp, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to download %q: %s", url, resp.Status)
-	}
-	file, err := os.Create(name)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	_, err = io.Copy(file, resp.Body)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// Checksum returns the SHA-256 checksum from named file
-func Checksum(name string) (string, error) {
-	content, err := os.ReadFile(name)
-	if err != nil {
-		return "", fmt.Errorf("failed to calculate checksum: %v", err)
-	}
-	return fmt.Sprintf("%x", sha256.Sum256(content)), nil
 }
 
 type App struct {
