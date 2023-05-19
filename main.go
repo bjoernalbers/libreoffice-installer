@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"os/user"
 	"path"
 	"path/filepath"
 	"runtime"
@@ -349,17 +348,9 @@ func pidsToOpt(pids []int) string {
 func quitApp(app, username string) error {
 	appleScript := fmt.Sprintf("quit app %q", app)
 	var cmd *exec.Cmd
-	currentUser, err := user.Current()
-	if err != nil {
-		return err
-	}
-	if currentUser.Username != username {
-		cmd = exec.Command("sudo", "--non-interactive", "--user", username, "osascript", "-e", appleScript)
-	} else {
-		cmd = exec.Command("osascript", "-e", appleScript)
-	}
+	cmd = exec.Command("sudo", "--non-interactive", "--user", username, "osascript", "-e", appleScript)
 	log.Print(cmd)
-	err = cmd.Run()
+	err := cmd.Run()
 	if err != nil {
 		return err
 	}
