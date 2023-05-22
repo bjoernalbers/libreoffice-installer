@@ -33,7 +33,8 @@ func main() {
 		log.Fatal(err)
 	}
 	volume := os.Args[3]
-	app := App{filepath.Join(volume, "/Applications/LibreOffice.app")}
+	appPath := filepath.Join(volume, "/Applications/LibreOffice.app")
+	app := App{appPath}
 	if !needsInstallation(app, LibreOfficeVersion) {
 		log.Println("LibreOffice", LibreOfficeVersion, "or newer is already installed.")
 		return
@@ -44,7 +45,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Remove directory /Applications/LibreOffice.app
+	log.Printf("Removing directory %q", appPath)
+	err = os.RemoveAll(appPath)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	diskImageFilename, err := dmg.Download(LibreOfficeVersion, runtime.GOARCH)
 	if err != nil {
