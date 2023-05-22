@@ -44,7 +44,7 @@ $(EXECUTABLE): $(shell find . -name '*.go' -or -name go.mod -or -name go.sum)
 	GOARCH=arm64 go build -o "$@-arm64"
 	GOARCH=amd64 go build -o "$@-amd64"
 	lipo "$@"-* -create -output "$@"
-	codesign --sign "$(APP_SIGNING_IDENTITY)" --options runtime --timestamp "$@"
+	codesign --sign "$(APP_SIGNING_IDENTITY)" "$@"
 
 check: $(DISTRIBUTION_PKG)
 	hdiutil create -size 1g testvolume.dmg
