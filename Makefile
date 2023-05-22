@@ -1,6 +1,7 @@
 PROJECT_NAME := libreoffice-installer
 IDENTIFIER := de.bjoernalbers.$(PROJECT_NAME)
 PKG_SIGNING_IDENTITY := Developer ID Installer: Bjoern Albers (2M83WXV6U8)
+APP_SIGNING_IDENTITY := Developer ID Application: Bjoern Albers (2M83WXV6U8)
 # Regex to capture Semantic Version string taken from: https://semver.org
 VERSION := $(shell git describe --tags | grep -Eo '^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$$' | tr -d v)
 BUILD_DIR := build
@@ -43,6 +44,7 @@ $(EXECUTABLE): $(shell find . -name '*.go' -or -name go.mod -or -name go.sum)
 	GOARCH=arm64 go build -o "$@-arm64"
 	GOARCH=amd64 go build -o "$@-amd64"
 	lipo "$@"-* -create -output "$@"
+	codesign --sign "$(APP_SIGNING_IDENTITY)" --options runtime --timestamp "$@"
 
 check: $(DISTRIBUTION_PKG)
 	hdiutil create -size 1g testvolume.dmg
