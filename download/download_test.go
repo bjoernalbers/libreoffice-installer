@@ -8,6 +8,10 @@ import (
 )
 
 func TestLatestVersion(t *testing.T) {
+	_, err := LatestVersion("")
+	if err == nil {
+		t.Fatalf(`LatestVersion("") err: %v`, err)
+	}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", `<!DOCTYPE html>
 <head>
