@@ -15,53 +15,47 @@ const VersionURL = "https://update.libreoffice.org/description"
 func LatestVersion(url string) (string, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("download page: %v", err)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("%s: %s", url, resp.Status)
+		return "", fmt.Errorf("download page: %s: %s", url, resp.Status)
 	}
-	version, err := parseVersion(resp.Body)
-	if err != nil {
-		return "", err
+	versions := downloadableVersions(resp.Body)
+	expectedVersions := 2
+	if foundVersions := len(versions); foundVersions != expectedVersions {
+		return "", fmt.Errorf("download page: expected %d versions, found %d: %q", expectedVersions, foundVersions, versions)
 	}
-	return version, nil
+	// versions[0] is experimental, versions[1] is stable a.k.a. "fresh"
+	return versions[1], nil
 }
 
-// parseVersion parsed the version from reader
-func parseVersion(r io.Reader) (string, error) {
-	z := html.NewTokenizer(r)
-	var foundVersionNumber bool
+// downloadableVersions extract the version numbers from the download page.
+func downloadableVersions(r io.Reader) []string {
 	var versions []string
+	var versionStartTag bool
+	tokenizer := html.NewTokenizer(r)
 	for {
-		tt := z.Next()
-		switch tt {
+		switch tokenizer.Next() {
 		case html.ErrorToken:
-			if err := z.Err(); err != io.EOF {
-				return "", err
-			}
-			if len(versions) != 2 {
-				return "", fmt.Errorf("expected two version numbers: %v", versions)
-			}
-			return versions[1], nil
+			return versions
 		case html.StartTagToken:
-			t := z.Token()
-			if t.Data != "span" {
+			token := tokenizer.Token()
+			if token.Data != "span" {
 				continue
 			}
-			for _, a := range t.Attr {
-				if a.Key == "class" && a.Val == "dl_version_number" {
-					foundVersionNumber = true
+			for _, attribute := range token.Attr {
+				if attribute.Key == "class" && attribute.Val == "dl_version_number" {
+					versionStartTag = true
 				}
 			}
 		case html.TextToken:
-			if !foundVersionNumber {
+			if !versionStartTag {
 				continue
 			}
-			t := z.Token()
-			versions = append(versions, t.Data)
+			versions = append(versions, tokenizer.Token().Data)
 		case html.EndTagToken:
-			foundVersionNumber = false
+			versionStartTag = false
 		}
 	}
 }

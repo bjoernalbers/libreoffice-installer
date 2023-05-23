@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -28,7 +29,7 @@ func TestLatestVersion(t *testing.T) {
 	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", `<!DOCTYPE html>
 <head>
-  <title>Download LibreOffice | LibreOffice - Free Office Suite - Based on OpenOffice - Compatible with Microsoft</title>
+  <title>Download LibreOffice</title>
 </head>
 <body class="Download" id="download-libreoffice">
   <span class="dl_version_number">7.5.3</span><br />
@@ -44,7 +45,7 @@ func TestLatestVersion(t *testing.T) {
 	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", `<!DOCTYPE html>
 <head>
-  <title>Download LibreOffice | LibreOffice - Free Office Suite - Based on OpenOffice - Compatible with Microsoft</title>
+  <title>Download LibreOffice</title>
 </head>
 <body class="Download" id="download-libreoffice">
   <span class="dl_version_number">7.5.3</span><br />
@@ -64,4 +65,63 @@ func TestLatestVersion(t *testing.T) {
 	if got != want {
 		t.Fatalf("LatestVersion() = %q, want: %q", got, want)
 	}
+}
+
+func TestDownloadableVersions(t *testing.T) {
+	tests := []struct {
+		input string
+		want  []string
+	}{
+		{
+			"",
+			[]string{},
+		},
+		{
+			"/invalid",
+			[]string{},
+		},
+		{
+			`<div>1.2.3</span>`,
+			[]string{},
+		},
+		{
+			`<div class="dl_version_number">1.2.3</span>`,
+			[]string{},
+		},
+		{
+			`<span>1.2.3</span>`,
+			[]string{},
+		},
+		{
+			`<span class="wrongclass">1.2.3</span>`,
+			[]string{},
+		},
+		{
+			`<span class="dl_version_number">1.2.3</span>`,
+			[]string{"1.2.3"},
+		},
+		{
+			`<span class="dl_version_number">1.2.3</span>
+			<span class="dl_version_number">4.5.6</span>
+			<span class="dl_version_number">7.8.9</span>`,
+			[]string{"1.2.3", "4.5.6", "7.8.9"},
+		},
+	}
+	for _, test := range tests {
+		if got := downloadableVersions(strings.NewReader(test.input)); !equal(got, test.want) {
+			t.Errorf("downloadableVersions() = %q, want: %q", got, test.want)
+		}
+	}
+}
+
+func equal(s1, s2 []string) bool {
+	if len(s1) != len(s2) {
+		return false
+	}
+	for i := range s1 {
+		if s1[i] != s2[i] {
+			return false
+		}
+	}
+	return true
 }
