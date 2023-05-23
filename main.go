@@ -5,9 +5,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -16,11 +14,9 @@ import (
 	"strings"
 
 	"github.com/bjoernalbers/libreoffice-installer/dmg"
+	"github.com/bjoernalbers/libreoffice-installer/download"
 	"github.com/hashicorp/go-version"
-	"golang.org/x/net/html"
 )
-
-const LibreOfficeDownloadURL = "https://update.libreoffice.org/description"
 
 func init() {
 	log.SetFlags(0)
@@ -28,7 +24,7 @@ func init() {
 }
 
 func main() {
-	LibreOfficeVersion, err := latestVersion(LibreOfficeDownloadURL)
+	LibreOfficeVersion, err := download.LatestVersion(download.VersionDownloadURL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -68,61 +64,6 @@ func main() {
 		log.Fatal("Copy of LibreOffice failed: ", err)
 	}
 	log.Print("Installation completed successfully")
-}
-
-// latestVersion returns the lastest available version of LibreOffice.
-func latestVersion(url string) (string, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("%s: %s", url, resp.Status)
-	}
-	version, err := parseVersion(resp.Body)
-	if err != nil {
-		return "", err
-	}
-	return version, nil
-}
-
-// parseVersion parsed the version from reader
-func parseVersion(r io.Reader) (string, error) {
-	z := html.NewTokenizer(r)
-	var foundVersionNumber bool
-	var versions []string
-	for {
-		tt := z.Next()
-		switch tt {
-		case html.ErrorToken:
-			if err := z.Err(); err != io.EOF {
-				return "", err
-			}
-			if len(versions) != 2 {
-				return "", fmt.Errorf("expected two version numbers: %v", versions)
-			}
-			return versions[1], nil
-		case html.StartTagToken:
-			t := z.Token()
-			if t.Data != "span" {
-				continue
-			}
-			for _, a := range t.Attr {
-				if a.Key == "class" && a.Val == "dl_version_number" {
-					foundVersionNumber = true
-				}
-			}
-		case html.TextToken:
-			if !foundVersionNumber {
-				continue
-			}
-			t := z.Token()
-			versions = append(versions, t.Data)
-		case html.EndTagToken:
-			foundVersionNumber = false
-		}
-	}
 }
 
 // needsInstallation returns true if installation of LibreOffice is required.
