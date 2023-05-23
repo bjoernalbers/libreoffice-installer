@@ -24,7 +24,7 @@ func init() {
 }
 
 func main() {
-	LibreOfficeVersion, err := download.LatestVersion(download.VersionDownloadURL)
+	LibreOfficeVersion, err := download.LatestVersion(download.VersionURL)
 	if err != nil {
 		log.Fatal(err)
 	}

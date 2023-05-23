@@ -9,7 +9,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-const VersionDownloadURL = "https://update.libreoffice.org/description"
+const VersionURL = "https://update.libreoffice.org/description"
 
 // LatestVersion returns the latest "fresh" version number of LibreOffice.
 func LatestVersion(url string) (string, error) {
