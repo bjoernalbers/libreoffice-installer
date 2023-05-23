@@ -22,7 +22,23 @@ func TestLatestVersion(t *testing.T) {
 		fmt.Fprintf(w, "%s", `<!DOCTYPE html></html>`)
 	}))
 	if _, err := LatestVersion(server.URL); err == nil {
-		t.Fatal("LatestVersion(): no error when HTML conains no versions.")
+		t.Fatal("LatestVersion(): no error when HTML contains no versions.")
+	}
+	server.Close()
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "%s", `<!DOCTYPE html>
+<head>
+  <title>Download LibreOffice | LibreOffice - Free Office Suite - Based on OpenOffice - Compatible with Microsoft</title>
+</head>
+<body class="Download" id="download-libreoffice">
+  <span class="dl_version_number">7.5.3</span><br />
+  <span class="dl_description_text">If you're a technology enthusiast, early adopter or power user, this version is for you!</span>
+</body>
+</html>
+`)
+	}))
+	if _, err := LatestVersion(server.URL); err == nil {
+		t.Fatal("LatestVersion(): no error when HTML contains only one version.")
 	}
 	server.Close()
 	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
