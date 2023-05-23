@@ -8,11 +8,17 @@ import (
 )
 
 func TestLatestVersion(t *testing.T) {
-	_, err := LatestVersion("")
-	if err == nil {
-		t.Fatalf(`LatestVersion("") err: %v`, err)
+	if _, err := LatestVersion(""); err == nil {
+		t.Fatal("LatestVersion(): no error with invalid URL.")
 	}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	if _, err := LatestVersion(server.URL); err == nil {
+		t.Fatal("LatestVersion(): no error on HTTP 404.")
+	}
+	server.Close()
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", `<!DOCTYPE html>
 <head>
   <title>Download LibreOffice | LibreOffice - Free Office Suite - Based on OpenOffice - Compatible with Microsoft</title>
