@@ -28,6 +28,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("latest version: %s", latestVersion)
 	volume := os.Args[3]
 	appPath := filepath.Join(volume, "/Applications/LibreOffice.app")
 	app := App{appPath}
