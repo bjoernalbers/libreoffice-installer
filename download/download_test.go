@@ -32,9 +32,9 @@ func TestLatestVersion(t *testing.T) {
 </html>
 `)
 	}))
-	defer server.Close()
 	want := "7.4.7"
 	got, err := LatestVersion(server.URL)
+	server.Close()
 	if err != nil {
 		t.Fatalf("LatestVersion() err: %v", err)
 	}
