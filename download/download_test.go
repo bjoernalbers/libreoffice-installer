@@ -19,6 +19,13 @@ func TestLatestVersion(t *testing.T) {
 	}
 	server.Close()
 	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "%s", `<!DOCTYPE html></html>`)
+	}))
+	if _, err := LatestVersion(server.URL); err == nil {
+		t.Fatal("LatestVersion(): no error when HTML conains no versions.")
+	}
+	server.Close()
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", `<!DOCTYPE html>
 <head>
   <title>Download LibreOffice | LibreOffice - Free Office Suite - Based on OpenOffice - Compatible with Microsoft</title>
