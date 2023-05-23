@@ -13,7 +13,6 @@ const VersionDownloadURL = "https://update.libreoffice.org/description"
 
 // LatestVersion returns the latest "fresh" version number of LibreOffice.
 func LatestVersion(url string) (string, error) {
-	//return "1.2.3", nil
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", err
