@@ -243,7 +243,6 @@ func installApplication(destination, diskimage string) error {
 	}
 	source := filepath.Join(mountpoint, filepath.Base(destination))
 	cmd := exec.Command("cp", "-R", source, destination)
-	log.Print(cmd) // debug
 	err = cmd.Run()
 	if err != nil {
 		return fmt.Errorf("%s: %v", cmd, err)
