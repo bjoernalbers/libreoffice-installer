@@ -48,7 +48,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	diskImageFilename, err := dmg.Download(latestVersion, runtime.GOARCH)
+	diskImageFilename, err := download.DiskImage(latestVersion, runtime.GOARCH)
 	if err != nil {
 		log.Fatal(err)
 	}
