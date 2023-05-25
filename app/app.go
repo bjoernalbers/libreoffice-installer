@@ -55,11 +55,12 @@ func (a *App) InstalledFromMAS() bool {
 	return false
 }
 
-// IsOlderThan returns a boolean indication wether the app is older than the
-// given version.
+// Outdated returns true when the application's version is less than the given
+// version.
+//
 // An error might be returned if any of the versions is invalid or the current
 // version could not be obtained.
-func (a *App) IsOlderThan(otherVersion string) (bool, error) {
+func (a *App) Outdated(otherVersion string) (bool, error) {
 	thisVersion, err := a.version()
 	if err != nil {
 		return false, err
@@ -184,7 +185,7 @@ func NeedsInstallation(a App, version string) bool {
 	}
 	// true if current LibreOffice version is outdated or the version could not
 	// be determined.
-	older, err := a.IsOlderThan(version)
+	older, err := a.Outdated(version)
 	if err != nil || older {
 		log.Println("LibreOffice is probably outdated.")
 		return true
