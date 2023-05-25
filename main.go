@@ -119,7 +119,7 @@ func (a *App) InstalledFromMAS() bool {
 // IsOlderThan returns a boolean indication wether the app is older than the
 // given version.
 // An error might be returned if any of the versions is invalid or the current
-// version could not be optained.
+// version could not be obtained.
 func (a *App) IsOlderThan(otherVersion string) (bool, error) {
 	thisVersion, err := a.version()
 	if err != nil {
