@@ -36,23 +36,19 @@ func main() {
 		log.Println("LibreOffice", latestVersion, "or newer is already installed.")
 		return
 	}
-
 	err = quitLibreOffice()
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	log.Printf("Removing directory %q", appPath)
 	err = os.RemoveAll(appPath)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	diskImageFilename, err := download.DiskImage(latestVersion, runtime.GOARCH)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	mountpoint, err := dmg.Attach(diskImageFilename)
 	if err != nil {
 		log.Fatal(err)
