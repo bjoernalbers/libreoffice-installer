@@ -38,14 +38,14 @@ func (a *App) version() (string, error) {
 	return strings.TrimSpace(string(stdout)), nil
 }
 
-// InstalledFromMAS returns a boolean indicating whether the app has been
+// FromMacAppStore returns a boolean indicating whether the app has been
 // installed from the Mac App Store (MAS).
 //
 // If the app contains an App Store receipts it was probably installed from
 // there.
 // To be 100 % sure we'd have to validate the receipt, though:
 // https://stackoverflow.com/questions/30339568/how-can-i-know-if-an-app-is-installed-from-apple-app-store-or-other-stores-in-os
-func (a *App) InstalledFromMAS() bool {
+func (a *App) FromMacAppStore() bool {
 	masReceipt := filepath.Join(a.Path, "Contents", "_MASReceipt", "receipt")
 	_, err := os.Stat(masReceipt)
 	if err == nil {
@@ -176,7 +176,7 @@ func NeedsInstallation(a App, version string) bool {
 	// true if LibreOffice has been installed from Mac App Store since that
 	// version is currently not fit for production:
 	// https://bugs.documentfoundation.org/show_bug.cgi?id=153927
-	if a.InstalledFromMAS() {
+	if a.FromMacAppStore() {
 		return true
 	}
 	// true if current LibreOffice version is outdated or the version could not
