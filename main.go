@@ -216,7 +216,7 @@ func pidsToOpt(pids []int) string {
 	return strings.Join(s, ",")
 }
 
-// quitApp quits macOS applicattion by username.
+// quitApp quits macOS application by username.
 func quitApp(app, username string) error {
 	appleScript := fmt.Sprintf("quit app %q", app)
 	var cmd *exec.Cmd
