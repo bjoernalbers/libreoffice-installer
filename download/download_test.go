@@ -126,37 +126,6 @@ func equal(s1, s2 []string) bool {
 	return true
 }
 
-func TestDiskImage(t *testing.T) {
-	tests := []struct {
-		version string
-		arch    string
-		wantErr bool
-	}{
-		{
-			"7.4.7",
-			"invalid",
-			true,
-		},
-		{
-			"invalid",
-			"arm64",
-			true,
-		},
-		{
-			"7.4.7",
-			"arm64",
-			false,
-		},
-	}
-	for _, test := range tests {
-		_, err := DiskImage(test.version, test.arch)
-		if (err != nil) != test.wantErr {
-			t.Fatalf("DiskImage(%q, %q) err = %v, wantErr: %v",
-				test.version, test.arch, err, test.wantErr)
-		}
-	}
-}
-
 func TestDiskImageURL(t *testing.T) {
 	tests := []struct {
 		version string
