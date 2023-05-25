@@ -44,21 +44,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Removing directory %q", appPath)
-	err = os.RemoveAll(appPath)
+	err = installApplication(appPath, diskImageFilename)
 	if err != nil {
 		log.Fatal(err)
-	}
-	mountpoint, err := dmg.Attach(diskImageFilename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer dmg.Detach(mountpoint)
-	cmd := exec.Command("cp", "-R", filepath.Join(mountpoint, "LibreOffice.app"), filepath.Join(volume, "Applications"))
-	log.Print(cmd) // debug
-	err = cmd.Run()
-	if err != nil {
-		log.Fatal("Copy of LibreOffice failed: ", err)
 	}
 	log.Print("Installation completed successfully")
 }
@@ -237,6 +225,28 @@ func quitApp(app, username string) error {
 	err := cmd.Run()
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+// installApplication installs application from disk image to destination,
+// which is the application's target bundle path.
+func installApplication(destination, diskimage string) error {
+	mountpoint, err := dmg.Attach(diskimage)
+	if err != nil {
+		return err
+	}
+	defer dmg.Detach(mountpoint)
+	err = os.RemoveAll(destination)
+	if err != nil {
+		return err
+	}
+	source := filepath.Join(mountpoint, filepath.Base(destination))
+	cmd := exec.Command("cp", "-R", source, destination)
+	log.Print(cmd) // debug
+	err = cmd.Run()
+	if err != nil {
+		return fmt.Errorf("%s: %v", cmd, err)
 	}
 	return nil
 }

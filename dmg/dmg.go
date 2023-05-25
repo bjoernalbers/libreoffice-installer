@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+// InstallApplication install an application from disk image to
+
 // Attach attaches the named disk image and returns its mount point.
 func Attach(name string) (string, error) {
 	cmd := exec.Command("hdiutil", "attach", name, "-nobrowse", "-plist")
