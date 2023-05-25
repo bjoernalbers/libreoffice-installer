@@ -166,24 +166,3 @@ func pidsToOpt(pids []int) string {
 	}
 	return strings.Join(s, ",")
 }
-
-// needsInstallation returns true if installation of LibreOffice is required.
-func NeedsInstallation(a App, version string) bool {
-	// true if LibreOffice is not installed at all
-	if a.IsMissing() {
-		return true
-	}
-	// true if LibreOffice has been installed from Mac App Store since that
-	// version is currently not fit for production:
-	// https://bugs.documentfoundation.org/show_bug.cgi?id=153927
-	if a.FromMacAppStore() {
-		return true
-	}
-	// true if current LibreOffice version is outdated or the version could not
-	// be determined.
-	older, err := a.Outdated(version)
-	if err != nil || older {
-		return true
-	}
-	return false
-}

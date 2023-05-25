@@ -28,7 +28,7 @@ func main() {
 	volume := os.Args[3]
 	appPath := filepath.Join(volume, "/Applications/LibreOffice.app")
 	a := app.App{appPath}
-	if !app.NeedsInstallation(a, latestVersion) {
+	if !needsInstallation(a, latestVersion) {
 		log.Println("LibreOffice", latestVersion, "or newer is already installed.")
 		return
 	}
@@ -45,6 +45,27 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Print("Installation completed successfully")
+}
+
+// needsInstallation returns true if installation of LibreOffice is required.
+func needsInstallation(a app.App, version string) bool {
+	// true if LibreOffice is not installed at all
+	if a.IsMissing() {
+		return true
+	}
+	// true if LibreOffice has been installed from Mac App Store since that
+	// version is currently not fit for production:
+	// https://bugs.documentfoundation.org/show_bug.cgi?id=153927
+	if a.FromMacAppStore() {
+		return true
+	}
+	// true if current LibreOffice version is outdated or the version could not
+	// be determined.
+	older, err := a.Outdated(version)
+	if err != nil || older {
+		return true
+	}
+	return false
 }
 
 // installApplication installs application from disk image to destination,
