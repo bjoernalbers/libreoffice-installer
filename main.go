@@ -25,15 +25,15 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("latest version: %s", latestVersion)
 	volume := os.Args[3]
 	appPath := filepath.Join(volume, "/Applications/LibreOffice.app")
 	a := app.App{appPath}
 	if !needsInstallation(a, latestVersion) {
-		log.Println("LibreOffice", latestVersion, "or newer is already installed.")
+		log.Printf("LibreOffice %s or newer is already installed", latestVersion)
 		return
 	}
-	diskimage, err := download.DiskImage(latestVersion, runtime.GOARCH)
+	arch := runtime.GOARCH
+	diskimage, err := download.DiskImage(latestVersion, arch)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,7 +45,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Print("Installation completed successfully")
+	log.Printf("LibreOffice %s (%s) successfully installed", latestVersion, arch)
 }
 
 // needsInstallation returns true if installation of LibreOffice is required.
