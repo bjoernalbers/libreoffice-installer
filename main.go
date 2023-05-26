@@ -66,8 +66,8 @@ func needsInstallation(a app.App, version string) bool {
 	return false
 }
 
-// outdated returns true if version 1 is less than version 2 or if any version
-// is invalid.
+// outdated returns true if version 1 is less than version 2 or if the versions
+// are not comparable.
 func outdated(version1, version2 string) bool {
 	v1, err := version.NewVersion(version1)
 	if err != nil {
