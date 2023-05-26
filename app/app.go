@@ -25,8 +25,8 @@ func (a *App) IsMissing() bool {
 	return true
 }
 
-// version returns the app's version
-func (a *App) version() (string, error) {
+// Version returns the app's version
+func (a *App) Version() (string, error) {
 	cmd := exec.Command("/usr/bin/defaults",
 		"read",
 		filepath.Join(a.Path, "Contents/Info.plist"),
@@ -60,7 +60,7 @@ func (a *App) FromMacAppStore() bool {
 // An error might be returned if any of the versions is invalid or the current
 // version could not be obtained.
 func (a *App) Outdated(otherVersion string) (bool, error) {
-	thisVersion, err := a.version()
+	thisVersion, err := a.Version()
 	if err != nil {
 		return false, err
 	}
