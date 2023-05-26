@@ -9,8 +9,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-
-	"github.com/hashicorp/go-version"
 )
 
 type App struct {
@@ -52,27 +50,6 @@ func (a *App) FromMacAppStore() bool {
 		return true
 	}
 	return false
-}
-
-// Outdated returns true when the application's version is less than the given
-// version.
-//
-// An error might be returned if any of the versions is invalid or the current
-// version could not be obtained.
-func (a *App) Outdated(otherVersion string) (bool, error) {
-	thisVersion, err := a.Version()
-	if err != nil {
-		return false, err
-	}
-	this, err := version.NewVersion(thisVersion)
-	if err != nil {
-		return false, err
-	}
-	other, err := version.NewVersion(otherVersion)
-	if err != nil {
-		return false, err
-	}
-	return this.LessThan(other), nil
 }
 
 func QuitLibreOffice() error {

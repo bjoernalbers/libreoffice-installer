@@ -12,6 +12,7 @@ import (
 	"github.com/bjoernalbers/libreoffice-installer/app"
 	"github.com/bjoernalbers/libreoffice-installer/dmg"
 	"github.com/bjoernalbers/libreoffice-installer/download"
+	"github.com/hashicorp/go-version"
 )
 
 func init() {
@@ -61,11 +62,25 @@ func needsInstallation(a app.App, version string) bool {
 	}
 	// true if current LibreOffice version is outdated or the version could not
 	// be determined.
-	older, err := a.Outdated(version)
-	if err != nil || older {
+	installedVersion, err := a.Version()
+	if err != nil || outdated(installedVersion, version) {
 		return true
 	}
 	return false
+}
+
+// outdated returns true if version 1 is less than version 2 or if any version
+// is invalid.
+func outdated(version1, version2 string) bool {
+	v1, err := version.NewVersion(version1)
+	if err != nil {
+		return true
+	}
+	v2, err := version.NewVersion(version2)
+	if err != nil {
+		return true
+	}
+	return v1.LessThan(v2)
 }
 
 // installApplication installs application from disk image to destination,
