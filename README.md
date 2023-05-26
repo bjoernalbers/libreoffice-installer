@@ -23,5 +23,6 @@ official download page.
 
 ## Usage
 
-Just download the package (`.pkg`) from the releases tab and double-click it or
-(better) deploy it via your MDM.
+Just download the package (`libreoffice-installer-VERSION.pkg`) of the
+[latest release](https://github.com/bjoernalbers/libreoffice-installer/releases/latest)
+and install it manually or (better) deploy automatically via your MDM.
