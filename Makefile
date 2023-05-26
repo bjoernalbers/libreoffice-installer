@@ -12,7 +12,7 @@ COMPONENT_PKG := $(BUILD_DIR)/$(PROJECT_NAME).pkg
 DISTRIBUTION_PKG := $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION).pkg
 TEST_VOLUME := testvolume
 
-.PHONY: check clean
+.PHONY: check install clean
 
 $(DISTRIBUTION_PKG): $(COMPONENT_PKG)
 ifndef VERSION
@@ -54,6 +54,9 @@ check: $(DISTRIBUTION_PKG)
 	"$(TEST_VOLUME)/Applications/LibreOffice.app/Contents/MacOS/soffice" --version
 	hdiutil detach "$(TEST_VOLUME)"
 	rm testvolume.dmg
+
+install: $(DISTRIBUTION_PKG)
+	sudo installer -pkg "$(DISTRIBUTION_PKG)" -target /
 
 clean:
 	rm -rf $(BUILD_DIR)
