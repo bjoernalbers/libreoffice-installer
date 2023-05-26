@@ -68,7 +68,7 @@ func QuitLibreOffice() error {
 	for _, user := range users {
 		err := quitApp("LibreOffice", user)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to quit LibreOffice")
 		}
 	}
 	pids, err = pgrep(procname)
