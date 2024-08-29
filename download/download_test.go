@@ -32,7 +32,7 @@ func TestLatestVersion(t *testing.T) {
   <title>Download LibreOffice</title>
 </head>
 <body class="Download" id="download-libreoffice">
-  <span class="dl_version_number">7.5.3</span><br />
+  <span class="dl_version_number">24.8.0</span><br />
   <span class="dl_description_text">If you're a technology enthusiast, early adopter or power user, this version is for you!</span>
 </body>
 </html>
@@ -48,15 +48,15 @@ func TestLatestVersion(t *testing.T) {
   <title>Download LibreOffice</title>
 </head>
 <body class="Download" id="download-libreoffice">
-  <span class="dl_version_number">7.5.3</span><br />
+  <span class="dl_version_number">24.8.0</span>
   <span class="dl_description_text">If you're a technology enthusiast, early adopter or power user, this version is for you!</span>
-  <span class="dl_version_number">7.4.7</span><br />
+  <span class="dl_version_number">24.2.5</span><br />
   <span class="dl_description_text">This version is slightly older and does not have the latest features, but it has been tested for longer. For business deployments, we <a href="https://www.libreoffice.org/download/libreoffice-in-business/">strongly recommend support from certified partners</a> which also offer long-term support versions of LibreOffice.</span>
 </body>
 </html>
 `)
 	}))
-	want := "7.4.7"
+	want := "24.2.5"
 	got, err := LatestVersion(server.URL)
 	server.Close()
 	if err != nil {
@@ -134,31 +134,31 @@ func TestDiskImageURL(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			"7.4.6",
+			"24.2.5",
 			"amd64",
-			"https://download.documentfoundation.org/libreoffice/stable/7.4.6/mac/x86_64/LibreOffice_7.4.6_MacOS_x86-64.dmg",
+			"https://download.documentfoundation.org/libreoffice/stable/24.2.5/mac/x86_64/LibreOffice_24.2.5_MacOS_x86-64.dmg",
 			false,
 		},
 		{
-			"7.4.6",
+			"24.2.5",
 			"arm64",
-			"https://download.documentfoundation.org/libreoffice/stable/7.4.6/mac/aarch64/LibreOffice_7.4.6_MacOS_aarch64.dmg",
+			"https://download.documentfoundation.org/libreoffice/stable/24.2.5/mac/aarch64/LibreOffice_24.2.5_MacOS_aarch64.dmg",
 			false,
 		},
 		{
-			"7.5.2",
+			"24.8.0",
 			"amd64",
-			"https://download.documentfoundation.org/libreoffice/stable/7.5.2/mac/x86_64/LibreOffice_7.5.2_MacOS_x86-64.dmg",
+			"https://download.documentfoundation.org/libreoffice/stable/24.8.0/mac/x86_64/LibreOffice_24.8.0_MacOS_x86-64.dmg",
 			false,
 		},
 		{
-			"7.5.2",
+			"24.8.0",
 			"arm64",
-			"https://download.documentfoundation.org/libreoffice/stable/7.5.2/mac/aarch64/LibreOffice_7.5.2_MacOS_aarch64.dmg",
+			"https://download.documentfoundation.org/libreoffice/stable/24.8.0/mac/aarch64/LibreOffice_24.8.0_MacOS_aarch64.dmg",
 			false,
 		},
 		{
-			"7.4.6",
+			"24.2.5",
 			"",
 			"",
 			true,
