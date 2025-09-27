@@ -1,13 +1,13 @@
-PROJECT_NAME := libreoffice-installer
-IDENTIFIER := de.bjoernalbers.$(PROJECT_NAME)
+PROJECT_NAME     := libreoffice-installer
+IDENTIFIER       := de.bjoernalbers.$(PROJECT_NAME)
 # Regex to capture Semantic Version string taken from: https://semver.org
-VERSION := $(shell git describe --tags | grep -Eo '^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$$' | tr -d v)
-BUILD_DIR := $(shell mktemp -d)
-SCRIPTS_DIR := $(shell mktemp -d)
-EXECUTABLE := $(BUILD_DIR)/$(PROJECT_NAME)
-COMPONENT_PKG := $(BUILD_DIR)/$(PROJECT_NAME).pkg
+VERSION          := $(shell git describe --tags | grep -Eo '^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$$' | tr -d v)
+BUILD_DIR        := $(shell mktemp -d)
+SCRIPTS_DIR      := $(shell mktemp -d)
+EXECUTABLE       := $(BUILD_DIR)/$(PROJECT_NAME)
+COMPONENT_PKG    := $(BUILD_DIR)/$(PROJECT_NAME).pkg
 DISTRIBUTION_PKG := $(PROJECT_NAME).pkg
-TEST_VOLUME := testvolume
+TEST_VOLUME      := testvolume
 
 ifndef APPLE_INSTALLER_IDENTITY
 $(error APPLE_INSTALLER_IDENTITY is not set)
