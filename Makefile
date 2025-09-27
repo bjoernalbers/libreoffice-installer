@@ -17,13 +17,16 @@ ifndef APPLE_APPLICATION_IDENTITY
 $(error APPLE_APPLICATION_IDENTITY is not set)
 endif
 
-.PHONY: check install clean
+.PHONY: $(DISTRIBUTION_PKG) check install clean
 
-$(DISTRIBUTION_PKG): $(EXECUTABLE)
+$(DISTRIBUTION_PKG):
 ifndef VERSION
 	$(error No Semantic Version found in git tag)
 endif
-	cp "$<" "$(SCRIPTS_DIR)/postinstall"
+	$(foreach arch,arm64 amd64, GOARCH="$(arch)" go build -o "$(EXECUTABLE)-$(arch)"; )
+	lipo "$(EXECUTABLE)"-* -create -output "$(EXECUTABLE)"
+	codesign --sign "$(APPLE_APPLICATION_IDENTITY)" --options=runtime "$(EXECUTABLE)"
+	cp "$(EXECUTABLE)" "$(SCRIPTS_DIR)/postinstall"
 	pkgbuild \
 		--identifier "$(IDENTIFIER)" \
 		--version "$(VERSION)" \
@@ -43,12 +46,6 @@ endif
 		--wait
 	xcrun stapler staple "$@"
 	spctl --assess --type install "$@"
-
-$(EXECUTABLE): $(shell find . -name '*.go' -or -name go.mod -or -name go.sum)
-	GOARCH=arm64 go build -o "$@-arm64"
-	GOARCH=amd64 go build -o "$@-amd64"
-	lipo "$@"-* -create -output "$@"
-	codesign --sign "$(APPLE_APPLICATION_IDENTITY)" --options=runtime "$@"
 
 check: $(DISTRIBUTION_PKG)
 	hdiutil create -size 1g testvolume.dmg
