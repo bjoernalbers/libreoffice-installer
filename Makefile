@@ -47,7 +47,7 @@ endif
 	xcrun stapler staple "$@"
 	spctl --assess --type install "$@"
 
-check: $(DISTRIBUTION_PKG)
+check:
 	hdiutil create -size 1g testvolume.dmg
 	hdiutil attach testvolume.dmg -nobrowse -mountpoint "$(TEST_VOLUME)"
 	mkdir -p "$(TEST_VOLUME)/Applications"
@@ -56,7 +56,7 @@ check: $(DISTRIBUTION_PKG)
 	hdiutil detach "$(TEST_VOLUME)"
 	rm testvolume.dmg
 
-install: $(DISTRIBUTION_PKG)
+install:
 	sudo installer -pkg "$(DISTRIBUTION_PKG)" -target /
 
 clean:
