@@ -13,27 +13,22 @@ TEST_VOLUME := testvolume
 
 .PHONY: check install clean
 
-$(DISTRIBUTION_PKG): $(COMPONENT_PKG)
-ifndef VERSION
-	$(error No Semantic Version found in git tag)
-endif
-	productbuild \
-		--package "$<" \
-		--sign "$(PKG_SIGNING_IDENTITY)" \
-		--quiet \
-		"$@"
-
-$(COMPONENT_PKG): $(EXECUTABLE)
+$(DISTRIBUTION_PKG): $(EXECUTABLE)
 ifndef VERSION
 	$(error No Semantic Version found in git tag)
 endif
 	mkdir -p $(SCRIPTS_DIR)
 	cp "$<" "$(SCRIPTS_DIR)/postinstall"
 	pkgbuild \
-		--nopayload \
-		--scripts "$(SCRIPTS_DIR)" \
 		--identifier "$(IDENTIFIER)" \
 		--version "$(VERSION)" \
+		--scripts "$(SCRIPTS_DIR)" \
+		--sign "$(PKG_SIGNING_IDENTITY)" \
+		--quiet \
+		--nopayload \
+		"$(COMPONENT_PKG)"
+	productbuild \
+		--package "$(COMPONENT_PKG)" \
 		--sign "$(PKG_SIGNING_IDENTITY)" \
 		--quiet \
 		"$@"
