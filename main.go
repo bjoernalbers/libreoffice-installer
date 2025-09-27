@@ -25,7 +25,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	volume := os.Args[3]
+	volume := "/"
+	if len(os.Args) > 3 {
+		volume = os.Args[3]
+	}
 	appPath := filepath.Join(volume, "/Applications/LibreOffice.app")
 	a := app.App{appPath}
 	if !needsInstallation(a, latestVersion) {
