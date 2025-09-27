@@ -5,7 +5,7 @@ An installer package for macOS that deploys the latest stable version of
 
 ## Features
 
-It will (re)install LibreOffice if it...
+It will automatically download and install LibreOffice if it...
 
 - is not installed at all
 - is outdated
