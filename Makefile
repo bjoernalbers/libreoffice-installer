@@ -6,10 +6,9 @@ APP_SIGNING_IDENTITY := Developer ID Application: Bjoern Albers (2M83WXV6U8)
 VERSION := $(shell git describe --tags | grep -Eo '^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$$' | tr -d v)
 BUILD_DIR := build
 SCRIPTS_DIR := $(BUILD_DIR)/scripts
-DIST_DIR := dist
 EXECUTABLE := $(BUILD_DIR)/$(PROJECT_NAME)
 COMPONENT_PKG := $(BUILD_DIR)/$(PROJECT_NAME).pkg
-DISTRIBUTION_PKG := $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION).pkg
+DISTRIBUTION_PKG := $(PROJECT_NAME).pkg
 TEST_VOLUME := testvolume
 
 .PHONY: check install clean
