@@ -47,6 +47,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("installing to %s ...", appPath)
 	err = installApplication(appPath, diskimage)
 	if err != nil {
 		log.Fatal(err)
