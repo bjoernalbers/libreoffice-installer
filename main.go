@@ -42,6 +42,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("quitting LibreOffice if running ...")
 	err = app.QuitLibreOffice()
 	if err != nil {
 		log.Fatal(err)
