@@ -13,6 +13,10 @@ ifndef APPLE_INSTALLER_IDENTITY
 $(error APPLE_INSTALLER_IDENTITY is not set)
 endif
 
+ifndef APPLE_APPLICATION_IDENTITY
+$(error APPLE_APPLICATION_IDENTITY is not set)
+endif
+
 .PHONY: check install clean
 
 $(DISTRIBUTION_PKG): $(EXECUTABLE)
@@ -44,6 +48,7 @@ $(EXECUTABLE): $(shell find . -name '*.go' -or -name go.mod -or -name go.sum)
 	GOARCH=arm64 go build -o "$@-arm64"
 	GOARCH=amd64 go build -o "$@-amd64"
 	lipo "$@"-* -create -output "$@"
+	codesign --sign "$(APPLE_APPLICATION_IDENTITY)" --options=runtime "$@"
 
 check: $(DISTRIBUTION_PKG)
 	hdiutil create -size 1g testvolume.dmg
