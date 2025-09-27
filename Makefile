@@ -34,6 +34,11 @@ endif
 		--quiet \
 		"$@"
 	rm -rf "$(BUILD_DIR)" "$(SCRIPTS_DIR)"
+	xcrun notarytool submit "$@" \
+		--keychain-profile "default" \
+		--wait
+	xcrun stapler staple "$@"
+	spctl --assess --type install "$@"
 
 $(EXECUTABLE): $(shell find . -name '*.go' -or -name go.mod -or -name go.sum)
 	GOARCH=arm64 go build -o "$@-arm64"
