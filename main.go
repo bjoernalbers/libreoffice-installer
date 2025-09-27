@@ -25,6 +25,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("latest stable version: %v", latestVersion)
 	volume := "/"
 	if len(os.Args) > 3 {
 		volume = os.Args[3]
