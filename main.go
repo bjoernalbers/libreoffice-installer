@@ -37,6 +37,7 @@ func main() {
 		return
 	}
 	arch := runtime.GOARCH
+	log.Printf("downloading LibreOffice %s (%s) ...", latestVersion, arch)
 	diskimage, err := download.DiskImage(latestVersion, arch)
 	if err != nil {
 		log.Fatal(err)
